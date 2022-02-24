@@ -1,0 +1,134 @@
+﻿@model SQLTest
+@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="container">
+    <h1>SQL Connection Checker</h1>
+    <hr />
+
+    <form method="post" class="form-group">
+
+
+        @Html.LabelFor(x => x.ConnectionString.Username, "UserName")
+        @Html.TextBoxFor(x => x.ConnectionString.Username, new { @class = "form-control" })
+        @Html.LabelFor(x => x.ConnectionString.Password, "Password")
+        @Html.TextBoxFor(x => x.ConnectionString.Password, new { @class = "form-control", @type = "password" })
+        @Html.LabelFor(x => x.ConnectionString.Server, "Server")
+        @Html.TextBoxFor(x => x.ConnectionString.Server, new { @class = "form-control" })
+        @Html.LabelFor(x => x.ConnectionString.InitialCatalog, "InitialCatalog")
+        @Html.TextBoxFor(x => x.ConnectionString.InitialCatalog, new { @class = "form-control" })
+        @Html.LabelFor(x => x.ConnectionString.TableName)
+        @Html.TextBoxFor(x => x.ConnectionString.TableName, new { @class = "form-control" })
+        @Html.LabelFor(x => x.ConnectionString.AuthenticationType, "Authentication Type")
+        @Html.DropDownListFor(model => model.ConnectionString.AuthenticationType,Html.GetEnumSelectList(typeof(AuthenticationType)), "Select")
+        @Html.LabelFor(x => x.ConnectionString.TrustServerCertificate, "TrustServerCertificate")
+
+        @Html.DropDownListFor(x => x.ConnectionString.TrustServerCertificate, new SelectList(
+    new[]        {
+
+        new { Value = "true", Text = "True" },
+        new { Value = "false", Text = "False" },
+    },
+    "Value",
+    "Text",
+    Model
+))
+        @Html.LabelFor(x => x.ConnectionString.TrustServerCertificate, "MultipleActiveResultSets")
+
+        @Html.DropDownListFor(x => x.ConnectionString.MultipleActiveResultSets, new SelectList(
+    new[]        {
+
+        new { Value = "true", Text = "True" },
+        new { Value = "false", Text = "False" },
+    },
+    "Value",
+    "Text",
+    Model
+))
+
+        @Html.LabelFor(x => x.ConnectionString.Encrypt, "Encrypt")
+
+
+        @Html.DropDownListFor(x => x.ConnectionString.Encrypt, new SelectList(
+    new[]        {
+
+        new { Value = "true", Text = "True" },
+        new { Value = "false", Text = "False" },
+    },
+    "Value",
+    "Text",
+    Model
+))
+
+        <div><button type="submit" class="btn btn-primary">Test!</button></div>
+        
+
+
+        <hr />
+        <div class="alert alert-info" role="alert" style="word-wrap: break-word">
+            <h4 class="alert-heading">Connection String generated from values above</h4>
+            @Html.LabelFor(x => x.ConnectionString.FullConnectionString, "Connection String")
+            @Html.DisplayTextFor(x => x.ConnectionString.FullConnectionString)
+        </div>
+        @if (Model.Rows.Any())
+        {<div class="alert alert-success">Successful call!</div>
+            <div class="alert alert-light">Sample returned rows for database [@Model.ConnectionString.InitialCatalog] | Table [@Model.ConnectionString.TableName]</div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        @foreach (var colHeader in Model.ColumnNames)
+                        {
+                            <th>@colHeader</th>
+
+                        }
+                    </tr>
+                </thead>
+                @for (int i = 0; i < Model.Rows.Count; i++)
+                {
+                    var rowArray = Model.Rows[i].Split(',');
+
+                    <tr>
+                        @foreach (var rowItem in rowArray)
+                        {
+                            <td>@rowItem</td>
+
+                        }
+                    </tr>
+                }
+
+            </table>
+        }
+
+
+    </form>
+
+    <hr />
+
+     @if (!String.IsNullOrEmpty(Model.InformationMessage))
+    {
+        <h3>Information:</h3>
+
+        <code>@Model.InformationMessage</code>
+
+
+
+    }
+     @if (!String.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <h3>Error:</h3>
+
+        <code>@Model.ErrorMessage</code>
+
+
+
+    }
+
+
+</div>
+
+
+
+
+
+
